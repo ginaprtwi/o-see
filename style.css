@@ -91,7 +91,6 @@ hr {
 }
 
 .pixel-btn {
-margin-top: 60px;
   font-family: 'VT323', monospace;
   font-size: 16px;
   color: #000;
@@ -112,7 +111,7 @@ margin-top: 60px;
 
 .win-second-wrap {
   position: absolute;
-  top: 350px;  
+  top: 362px;  
   right: 0;   
   z-index: 4;  
 }
