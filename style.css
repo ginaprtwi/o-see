@@ -133,3 +133,75 @@ hr {
   height: auto;
   display: block;
 }
+
+.win-browser-wrap01 {
+  width: 100%;
+  margin-top: 24px;
+}
+ 
+.win-browser01 {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+ 
+/* WINDOW 2 - Grafik 1 */
+.win-second-wrap01 {
+  width: 100%;
+  margin-top: 24px;
+}
+ 
+.win-second01 {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+ 
+/* WINDOW 3 - Group 17 */
+.win-third-wrap01 {
+  width: 100%;
+  margin-top: 24px;
+}
+ 
+.win-third01 {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+ 
+/* WINDOW Additional */
+.win-add-wrap01 {
+  width: 100%;
+  margin-top: 24px;
+}
+ 
+.win-A01 {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+ 
+/* WINDOW 4 - Grafik 3 */
+.win-4-wrap01 {
+  width: 100%;
+  margin-top: 24px;
+}
+ 
+.win-401 {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+ 
+/* WINDOW 5 - Grafik 4 */
+.win-5-wrap01 {
+  width: 100%;
+  margin-top: 24px;
+}
+ 
+.win-501 {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
