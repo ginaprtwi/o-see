@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>O-See</title>
+
+<link
+href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+rel="stylesheet"
+/>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+
+  min-height:100vh;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  padding:24px 16px 80px;
+
+  background-color:#F0ADDA;
+
+  background-image:
+    linear-gradient(#ffffff 1px, transparent 1px),
+    linear-gradient(90deg, #ffffff 1px, transparent 1px);
+
+  background-size:30px 30px;
+
+  font-family:'VT323', monospace;
+
+}
+
+#chat-container{
+
+  width:100%;
+  max-width:390px;
+
+  height:88vh;
+
+  background:#FFF8FD;
+
+  border:3px solid #371537;
+
+  border-radius:14px;
+
+  overflow:hidden;
+
+  display:flex;
+  flex-direction:column;
+
+  box-shadow:6px 6px 0 #CC5BCC;
+
+}
+
+/* HEADER */
+
+#chat-header{
+
+  background:#F2CAFF;
+
+  border-bottom:3px solid #371537;
+
+  padding:12px 14px;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+}
+
+#avatar{
+
+  width:40px;
+  height:40px;
+
+  border-radius:50%;
+
+  background:white;
+
+  border:2px solid #371537;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:18px;
+
+}
+
+#header-name{
+
+  font-size:24px;
+  color:#371537;
+
+}
+
+#header-status{
+
+  font-size:15px;
+  color:#5f375f;
+
+}
+
+/* CHAT */
+
+#messages{
+
+  flex:1;
+
+  overflow-y:auto;
+
+  padding:12px;
+
+  display:flex;
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+#messages::-webkit-scrollbar{
+
+  width:6px;
+
+}
+
+#messages::-webkit-scrollbar-thumb{
+
+  background:#CC5BCC;
+
+}
+
+/* MESSAGE */
+
+.msg-wrap{
+
+  display:flex;
+  flex-direction:column;
+
+}
+
+.msg-wrap.user{
+
+  align-items:flex-end;
+
+}
+
+.msg-wrap.bot{
+
+  align-items:flex-start;
+
+}
+
+.bubble{
+
+  max-width:85%;
+
+  padding:10px 12px;
+
+  border-radius:10px;
+
+  border:2px solid #371537;
+
+  font-size:20px;
+
+  line-height:1.3;
+
+  white-space:pre-wrap;
+
+}
+
+.msg-wrap.user .bubble{
+
+  background:#F2CAFF;
+
+  color:#000;
+
+  box-shadow:3px 3px 0 #CC5BCC;
+
+}
+
+.msg-wrap.bot .bubble{
+
+  background:white;
+
+  color:#000;
+
+  box-shadow:3px 3px 0 #dba0db;
+
+}
+
+/* MENU */
+
+.menu-buttons{
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:8px;
+
+  margin-top:10px;
+
+}
+
+.menu-btn{
+
+  font-family:'VT323', monospace;
+
+  font-size:18px;
+
+  color:#000;
+
+  background:#F2CAFF;
+
+  border:2px solid #371537;
+
+  padding:8px 10px;
+
+  cursor:pointer;
+
+  box-shadow:3px 3px 0 #CC5BCC;
+
+  border-radius:6px;
+
+}
+
+.menu-btn:active{
+
+  box-shadow:1px 1px 0 #CC5BCC;
+
+  transform:translate(2px,2px);
+
+}
+
+/* INPUT */
+
+#input-area{
+
+  padding:10px;
+
+  border-top:3px solid #371537;
+
+  display:flex;
+
+  gap:8px;
+
+  background:#FFF0FA;
+
+}
+
+#msg-input{
+
+  flex:1;
+
+  resize:none;
+
+  border:2px solid #371537;
+
+  background:white;
+
+  padding:10px;
+
+  border-radius:8px;
+
+  outline:none;
+
+  font-family:'VT323', monospace;
+
+  font-size:20px;
+
+  min-height:45px;
+
+  max-height:100px;
+
+}
+
+#send-btn{
+
+  width:50px;
+  height:50px;
+
+  border:none;
+
+  cursor:pointer;
+
+  border-radius:8px;
+
+  font-family:'VT323', monospace;
+
+  font-size:24px;
+
+  background:#F2CAFF;
+
+  border:2px solid #371537;
+
+  box-shadow:3px 3px 0 #CC5BCC;
+
+}
+
+#send-btn:active{
+
+  transform:translate(2px,2px);
+
+  box-shadow:1px 1px 0 #CC5BCC;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="chat-container">
+
+  <div id="chat-header">
+
+    <div id="avatar">
+      ✨
+    </div>
+
+    <div>
+
+      <div id="header-name">
+        O-See
+      </div>
+
+      <div id="header-status">
+        your personal space
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="messages"></div>
+
+  <div id="input-area">
+
+    <textarea
+      id="msg-input"
+      rows="1"
+      placeholder="ketik..."
+    ></textarea>
+
+    <button id="send-btn">
+      ➤
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+const API_ENDPOINT =
+  'http://localhost:3000/chat';
+
+const messagesEl =
+  document.getElementById('messages');
+
+const inputEl =
+  document.getElementById('msg-input');
+
+const sendBtn =
+  document.getElementById('send-btn');
+
+let mode = 'menu';
+
+let tasks = [];
+
+let notes = [];
+
+let taskTemp = '';
+
+// =======================
+// MESSAGE
+// =======================
+
+function addMessage(
+  role,
+  text
+){
+
+  const wrap =
+    document.createElement('div');
+
+  wrap.className =
+    `msg-wrap ${role}`;
+
+  const bubble =
+    document.createElement('div');
+
+  bubble.className =
+    'bubble';
+
+  bubble.textContent =
+    text;
+
+  wrap.appendChild(bubble);
+
+  messagesEl.appendChild(wrap);
+
+  messagesEl.scrollTop =
+    messagesEl.scrollHeight;
+
+  return bubble;
+
+}
+
+// =======================
+// MENU
+// =======================
+
+function showMenu(){
+
+  const wrap =
+    document.createElement('div');
+
+  wrap.className =
+    'msg-wrap bot';
+
+  const bubble =
+    document.createElement('div');
+
+  bubble.className =
+    'bubble';
+
+  bubble.innerHTML = `
+
+HALOOO ✨
+
+pilih menu dulu yh
+
+<div class="menu-buttons">
+
+<button
+class="menu-btn"
+onclick="chooseMenu('ai')">
+🤖 AI
+</button>
+
+<button
+class="menu-btn"
+onclick="chooseMenu('add_task')">
+📝 tugas
+</button>
+
+<button
+class="menu-btn"
+onclick="chooseMenu('view_task')">
+📋 lihat
+</button>
+
+<button
+class="menu-btn"
+onclick="chooseMenu('done_task')">
+✅ done
+</button>
+
+<button
+class="menu-btn"
+onclick="chooseMenu('add_note')">
+📒 note
+</button>
+
+<button
+class="menu-btn"
+onclick="chooseMenu('view_note')">
+🗂 list
+</button>
+
+</div>
+
+`;
+
+  wrap.appendChild(bubble);
+
+  messagesEl.appendChild(wrap);
+
+  messagesEl.scrollTop =
+    messagesEl.scrollHeight;
+
+}
+
+// =======================
+// MENU ACTION
+// =======================
+
+function chooseMenu(selected){
+
+  mode = selected;
+
+  // AI
+  if(selected === 'ai'){
+
+    addMessage(
+      'bot',
+      '🤖 mode AI aktif\n\nketik "keluar" buat balik'
+    );
+
+  }
+
+  // ADD TASK
+  else if(
+    selected === 'add_task'
+  ){
+
+    addMessage(
+      'bot',
+      '📝 ketik tugasnya'
+    );
+
+  }
+
+  // VIEW TASK
+  else if(
+    selected === 'view_task'
+  ){
+
+    if(
+      tasks.length === 0
+    ){
+
+      addMessage(
+        'bot',
+        '📋 belum ada tugas 😭'
+      );
+
+      setTimeout(
+        showMenu,
+        500
+      );
+
+      return;
+
+    }
+
+    let result =
+      '📋 daftar tugas:\n\n';
+
+    tasks.forEach(
+
+      (
+        task,
+        index
+      ) => {
+
+        result +=
+`${index + 1}. ${task.name}
+📅 ${task.deadline}
+📌 ${task.status}
+
+`;
+
+      }
+
+    );
+
+    addMessage(
+      'bot',
+      result
+    );
+
+    setTimeout(
+      showMenu,
+      500
+    );
+
+  }
+
+  // DONE TASK
+  else if(
+    selected === 'done_task'
+  ){
+
+    if(
+      tasks.length === 0
+    ){
+
+      addMessage(
+        'bot',
+        '😭 belum ada tugas'
+      );
+
+      setTimeout(
+        showMenu,
+        500
+      );
+
+      return;
+
+    }
+
+    let result =
+      '✅ pilih nomor tugas\n\n';
+
+    tasks.forEach(
+
+      (
+        task,
+        index
+      ) => {
+
+        result +=
+`${index + 1}. ${task.name}\n`;
+
+      }
+
+    );
+
+    addMessage(
+      'bot',
+      result
+    );
+
+  }
+
+  // ADD NOTE
+  else if(
+    selected === 'add_note'
+  ){
+
+    addMessage(
+      'bot',
+      '📒 ketik catatanmu'
+    );
+
+  }
+
+  // VIEW NOTE
+  else if(
+    selected === 'view_note'
+  ){
+
+    if(
+      notes.length === 0
+    ){
+
+      addMessage(
+        'bot',
+        '🗂 belum ada catatan 😭'
+      );
+
+      setTimeout(
+        showMenu,
+        500
+      );
+
+      return;
+
+    }
+
+    let result =
+      '🗂 daftar catatan\n\n';
+
+    notes.forEach(
+
+      (
+        note,
+        index
+      ) => {
+
+        result +=
+`${index + 1}. ${note}\n\n`;
+
+      }
+
+    );
+
+    addMessage(
+      'bot',
+      result
+    );
+
+    setTimeout(
+      showMenu,
+      500
+    );
+
+  }
+
+}
+
+// =======================
+// SEND
+// =======================
+
+async function send(){
+
+  const text =
+    inputEl.value.trim();
+
+  if(!text) return;
+
+  inputEl.value = '';
+
+  addMessage(
+    'user',
+    text
+  );
+
+  // ===================
+  // AI MODE
+  // ===================
+
+  if(
+    mode === 'ai'
+  ){
+
+    if(
+      text.toLowerCase() ===
+      'keluar'
+    ){
+
+      mode = 'menu';
+
+      addMessage(
+        'bot',
+        '🚪 keluar mode AI'
+      );
+
+      showMenu();
+
+      return;
+
+    }
+
+    const typing =
+      addMessage(
+        'bot',
+        'ngetik...'
+      );
+
+    try{
+
+      const res =
+        await fetch(
+
+          API_ENDPOINT,
+
+          {
+
+            method:'POST',
+
+            headers:{
+              'Content-Type':
+                'application/json'
+            },
+
+            body:JSON.stringify({
+
+              message:text
+
+            })
+
+          }
+
+        );
+
+      const data =
+        await res.json();
+
+      typing.textContent =
+        data.reply;
+
+    }
+
+    catch(err){
+
+      typing.textContent =
+        '😭 AI error';
+
+    }
+
+  }
+
+  // ===================
+  // ADD TASK
+  // ===================
+
+  else if(
+    mode === 'add_task'
+  ){
+
+    taskTemp = text;
+
+    mode = 'deadline';
+
+    addMessage(
+      'bot',
+      '📅 deadline nya kapan?'
+    );
+
+  }
+
+  // ===================
+  // DEADLINE
+  // ===================
+
+  else if(
+    mode === 'deadline'
+  ){
+
+    tasks.push({
+
+      name:taskTemp,
+
+      deadline:text,
+
+      status:'pending'
+
+    });
+
+    addMessage(
+      'bot',
+      '✅ tugas berhasil ditambah'
+    );
+
+    mode = 'menu';
+
+    showMenu();
+
+  }
+
+  // ===================
+  // DONE TASK
+  // ===================
+
+  else if(
+    mode === 'done_task'
+  ){
+
+    const index =
+      parseInt(text) - 1;
+
+    if(
+      isNaN(index) ||
+      !tasks[index]
+    ){
+
+      addMessage(
+        'bot',
+        '😭 nomor invalid'
+      );
+
+      return;
+
+    }
+
+    tasks[index].status =
+      'selesai';
+
+    addMessage(
+      'bot',
+      `🎉 ${tasks[index].name} selesai`
+    );
+
+    showMenu();
+
+  }
+
+  // ===================
+  // ADD NOTE
+  // ===================
+
+  else if(
+    mode === 'add_note'
+  ){
+
+    notes.push(text);
+
+    addMessage(
+      'bot',
+      '📒 catatan disimpan'
+    );
+
+    mode = 'menu';
+
+    showMenu();
+
+  }
+
+}
+
+// =======================
+// EVENT
+// =======================
+
+sendBtn.addEventListener(
+  'click',
+  send
+);
+
+inputEl.addEventListener(
+
+  'keydown',
+
+  e => {
+
+    if(
+      e.key === 'Enter' &&
+      !e.shiftKey
+    ){
+
+      e.preventDefault();
+
+      send();
+
+    }
+
+  }
+
+);
+
+// =======================
+// START
+// =======================
+
+showMenu();
+
+</script>
+
+</body>
+</html>
