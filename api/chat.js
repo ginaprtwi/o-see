@@ -5,30 +5,12 @@ const client = new OpenAI({
   baseURL: 'https://api.groq.com/openai/v1'
 });
 
-module.exports = async (req, res) => {
-
-  // =========================
-  // CORS
-  // =========================
+export default async function handler(req, res){
 
   res.setHeader(
     'Access-Control-Allow-Origin',
     '*'
   );
-
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'POST'
-  );
-
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Content-Type'
-  );
-
-  // =========================
-  // METHOD CHECK
-  // =========================
 
   if(req.method !== 'POST'){
 
@@ -40,72 +22,12 @@ module.exports = async (req, res) => {
 
   try{
 
-    const { message, mode } = req.body;
+    const body =
+      typeof req.body === 'string'
+        ? JSON.parse(req.body)
+        : req.body;
 
-    let systemPrompt = '';
-
-    // =========================
-    // ASSISTANT MODE
-    // =========================
-
-    if(mode === 'assistant'){
-
-      systemPrompt = `
-Kamu adalah O-See.
-
-Kepribadian:
-- ngobrol kayak manusia biasa
-- santai
-- natural
-- friendly
-- ekspresif
-- hangat
-- jangan terlalu formal
-- jangan terlalu kaku
-- jangan terdengar seperti customer service
-- kadang boleh bercanda ringan
-- gunakan bahasa yang enak dibaca
-
-Gaya bicara:
-- pendek sampai sedang
-- jelas
-- tidak monoton
-- sesekali boleh pakai kata seperti:
-  "iyaa"
-  "nah"
-  "wkwk"
-  "anjir"
-  "btw"
-  kalau cocok dengan konteks
-
-Aturan:
-- jangan terlalu banyak bullet point
-- jangan terlalu panjang kalau tidak perlu
-- kalau user curhat, respon dengan empati dan natural
-- kalau user bingung, jelaskan simpel
-- jangan mengulang pertanyaan user
-- jawab seperti teman pintar yang asik diajak ngobrol
-
-Identitas:
-Nama kamu O-See.
-Kamu adalah AI companion modern yang smart tapi santai.
-`;
-
-    }
-
-    else{
-
-      systemPrompt = `
-Kamu adalah AI assistant yang santai,
-friendly,
-dan natural.
-`;
-
-    }
-
-    // =========================
-    // REQUEST KE GROQ
-    // =========================
+    const { message, mode } = body;
 
     const completion =
       await client.chat.completions.create({
@@ -115,7 +37,7 @@ dan natural.
         messages:[
           {
             role:'system',
-            content:systemPrompt
+            content:'Kamu adalah O-See. Ngobrol santai dan natural.'
           },
           {
             role:'user',
@@ -124,23 +46,18 @@ dan natural.
         ],
 
         temperature:1,
-        top_p:0.95,
         max_tokens:1000
 
       });
 
-    // =========================
-    // RESPONSE
-    // =========================
+    return res.status(200).json({
 
-    const reply =
-      completion
-      .choices[0]
-      .message
-      .content;
+      reply:
+        completion
+        .choices[0]
+        .message
+        .content
 
-    res.status(200).json({
-      reply
     });
 
   }
@@ -149,10 +66,10 @@ dan natural.
 
     console.error(err);
 
-    res.status(500).json({
+    return res.status(500).json({
       error:err.message
     });
 
   }
 
-};
+}
